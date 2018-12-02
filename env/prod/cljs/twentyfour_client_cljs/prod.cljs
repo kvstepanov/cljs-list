@@ -1,6 +1,6 @@
-(ns twentyfour-client-cljs.prod
+(ns todo-list.prod
   (:require
-    [twentyfour-client-cljs.core :as core]))
+   [todo-list.core :as core]))
 
 ;;ignore println statements in prod
 (set! *print-fn* (fn [& _]))

@@ -1,31 +1,31 @@
-(ns twentyfour-client-cljs.core
+(ns todo-list.core
   (:require
    [reagent.core :as r]))
 
-(def settings {:title "Twentyfour"})
+(def settings {:title "Todo List"})
 
 
 ;; Define state with some initial values
 (def app-state
   (r/atom
    {:count 2
-    :wishlist
+    :todolist
     [{:id 0 :text "Start learning mindcontrol" :finished true}
      {:id 1 :text "Read a book 'Debugging JS in IE11 without pain'" :finished false}
      {:id 2 :text "Become invisible for a while" :finished false}]}))
 
-;; Update wishlist with provided function and args
-(defn update-wishlist [f & args]
-  (apply swap! app-state update-in [:wishlist] f args))
+;; Update todolist with provided function and args
+(defn update-todolist [f & args]
+  (apply swap! app-state update-in [:todolist] f args))
 
-(defn add-wish [wish]
-  (update-wishlist conj wish))
+(defn add-todo [todo]
+  (update-todolist conj todo))
 
 (defn next-id []
   (swap! app-state update-in [:count] inc))
 
-(defn toggle-item [wish]
-  (swap! app-state assoc [:wishlist] 0))
+(defn toggle-item [todo]
+  (swap! app-state assoc [:todolist] 0))
 
 
 ;; Components
@@ -36,7 +36,7 @@
 (defn new-item []
   (let [val (r/atom "")
         handle-add-event #(do
-                            (add-wish (hash-map :id (:count (next-id)) :text @val))
+                            (add-todo (hash-map :id (:count (next-id)) :text @val))
                             (reset! val ""))]
     (fn []
       [:div
@@ -50,17 +50,17 @@
 
        [:button {:on-click handle-add-event} "Add"]])))
 
-(defn item [wish]
-  ^{:key (:id wish)}
+(defn item [todo]
+  ^{:key (:id todo)}
   [:div
-   [:span {:class "item-text"} (:text wish)]
-   [:i {:class (str "ti-check " (if (:finished wish) "checked" "unchecked"))
-        :on-click #(toggle-item (assoc wish :finished true))}]])
+   [:span {:class "item-text"} (:text todo)]
+   [:i {:class (str "ti-check " (if (:finished todo) "checked" "unchecked"))
+        :on-click #(toggle-item (assoc todo :finished true))}]])
 
 (defn items-list []
   [:div
-   (for [wish (:wishlist @app-state)]
-     (item wish))])
+   (for [todo (:todolist @app-state)]
+     (item todo))])
 
 (defn home-page []
   [:div.wrapper

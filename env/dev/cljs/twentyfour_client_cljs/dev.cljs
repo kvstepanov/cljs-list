@@ -1,7 +1,7 @@
-(ns ^:figwheel-no-load twentyfour-client-cljs.dev
+(ns ^:figwheel-no-load todo-list.dev
   (:require
-    [twentyfour-client-cljs.core :as core]
-    [devtools.core :as devtools]))
+   [todo-list.core :as core]
+   [devtools.core :as devtools]))
 
 
 (enable-console-print!)
