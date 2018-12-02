@@ -1,0 +1,51 @@
+body {
+  font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
+  max-width: 1000px;
+  margin: 0 auto;
+  /* padding-top: 72px; */
+  -webkit-font-smoothing: antialiased;
+  font-size: 1.125em;
+  font-weight: 200;
+  color: #999;
+  line-height: 1.5em;
+}
+
+h1, h2, h3 , h4{
+  color: #999;
+  font-weight: 200;
+}
+h1 {
+  font-size: 2.5em
+}
+
+h2 {
+  font-size: 2em
+}
+
+h3 {
+  font-size: 1.5em
+}
+
+a {
+  text-decoration: none;
+  color: #09f;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.item-text {
+  color: #555;
+  display: inline-block;
+  padding-right: 10px;
+
+}
+
+.ti-check.unchecked {
+  color: rgb(189, 186, 186);
+}
+
+.ti-check.checked {
+  color: rgb(36, 152, 206);
+}
