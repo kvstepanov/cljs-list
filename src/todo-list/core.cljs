@@ -24,8 +24,9 @@
 (defn next-id []
   (swap! app-state update-in [:count] inc))
 
-(defn toggle-item [todo]
-  (swap! app-state assoc [:todolist] 0))
+
+(defn toggle-todo [todo]
+  (swap! app-state update-in [:todolist (:id todo) :finished] not))
 
 
 ;; Components
@@ -36,7 +37,9 @@
 (defn new-item []
   (let [val (r/atom "")
         handle-add-event #(do
-                            (add-todo (hash-map :id (:count (next-id)) :text @val))
+                            (if (empty? @val)
+                              (println "Empty task")
+                              (add-todo (hash-map :id (:count (next-id)) :text @val)))
                             (reset! val ""))]
     (fn []
       [:div
@@ -55,12 +58,14 @@
   [:div
    [:span {:class "item-text"} (:text todo)]
    [:i {:class (str "ti-check " (if (:finished todo) "checked" "unchecked"))
-        :on-click #(toggle-item (assoc todo :finished true))}]])
+        ; :on-click (fn ([e] (println "Toggle")))
+        :on-click #(toggle-todo todo)}]])
 
 (defn items-list []
   [:div
    (for [todo (:todolist @app-state)]
      (item todo))])
+
 
 (defn home-page []
   [:div.wrapper
