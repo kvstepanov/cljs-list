@@ -1,5 +1,6 @@
 (ns todo-list.core
   (:require
+   [cljs.loader :as loader]
    [reagent.core :as r]))
 
 (def settings {:title "Todo List"})
@@ -14,19 +15,32 @@
      {:id 1 :text "Read a book 'Debugging JS in IE11 without pain'" :finished false}
      {:id 2 :text "Become invisible for a while" :finished false}]}))
 
+
+(def todo-text (r/atom ""))
+
+
 ;; Update todolist with provided function and args
 (defn update-todolist [f & args]
   (apply swap! app-state update-in [:todolist] f args))
 
+
 (defn add-todo [todo]
   (update-todolist conj todo))
+
+
+(defn toggle-todo [todo]
+  (swap! app-state update-in [:todolist (:id todo) :finished] not))
+
 
 (defn next-id []
   (swap! app-state update-in [:count] inc))
 
 
-(defn toggle-todo [todo]
-  (swap! app-state update-in [:todolist (:id todo) :finished] not))
+(defn handle-add-event []
+  (do
+    (if (not (empty? @todo-text))
+      (add-todo (hash-map :id (:count (next-id)) :text @todo-text)))
+    (reset! todo-text "")))
 
 
 ;; Components
@@ -34,32 +48,25 @@
   [:header
    [:h1 title]])
 
-(defn new-item []
-  (let [val (r/atom "")
-        handle-add-event #(do
-                            (if (empty? @val)
-                              (println "Empty task")
-                              (add-todo (hash-map :id (:count (next-id)) :text @val)))
-                            (reset! val ""))]
-    (fn []
-      [:div
-       [:input {:type "text"
-                :placeholder "Type your task"
-                :value @val
-                :on-change #(reset! val (-> % .-target .-value))
-                :on-key-press (fn [e]
-                                (if (= 13 (.-charCode e))
-                                  (handle-add-event)))}]
 
-       [:button {:on-click handle-add-event} "Add"]])))
+(defn new-item []
+  [:div
+   [:input {:type "text"
+            :placeholder "Type your task"
+            :value @todo-text
+            :on-change #(reset! todo-text (-> % .-target .-value))
+            :on-key-press (fn [e]
+                            (if (= 13 (.-charCode e))
+                              (handle-add-event)))}]
+   [:button {:on-click handle-add-event} "Add"]])
+
 
 (defn item [todo]
-  ^{:key (:id todo)}
-  [:div
+  [:div {:key (:id todo)}
    [:span {:class "item-text"} (:text todo)]
    [:i {:class (str "ti-check " (if (:finished todo) "checked" "unchecked"))
-        ; :on-click (fn ([e] (println "Toggle")))
         :on-click #(toggle-todo todo)}]])
+
 
 (defn items-list []
   [:div
@@ -67,7 +74,7 @@
      (item todo))])
 
 
-(defn home-page []
+(defn todo-app []
   [:div.wrapper
    [page-header (get settings :title)]
    [new-item]
@@ -75,9 +82,9 @@
    [items-list]])
 
 
-;; Initialize app
 (defn mount-root []
-  (r/render [home-page] (.getElementById js/document "app")))
+  (r/render [todo-app] (.getElementById js/document "app")))
+
 
 (defn init! []
   (mount-root))

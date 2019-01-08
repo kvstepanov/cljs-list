@@ -11,6 +11,8 @@
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-figwheel "0.5.16"]]
 
+  :test-paths ["features" "test"]
+
   :min-lein-version "2.5.0"
   :clean-targets ^{:protect false}
   [:target-path
